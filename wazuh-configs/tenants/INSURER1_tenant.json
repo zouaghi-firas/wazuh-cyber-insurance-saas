@@ -1,0 +1,145 @@
+{
+  "tenant": {
+    "name": "INSURER1",
+    "description": "Insurance Company 1 - Managing organizations org-1 and org-2",
+    "roles": [
+      {
+        "name": "insurer1_admin",
+        "description": "Admin role for INSURER1 with access to all org-1 and org-2 data",
+        "cluster_permissions": [
+          "cluster_monitor",
+          "cluster_composite_ops",
+          "indices:admin/template/get",
+          "indices:admin/template/put",
+          "indices:admin/template/delete"
+        ],
+        "index_permissions": [
+          {
+            "index_patterns": [
+              "wazuh-alerts-*"
+            ],
+            "fls": [],
+            "masked_fields": [],
+            "allowed_actions": [
+              "read",
+              "indices_monitor",
+              "indices_data/read",
+              "indices_data/write",
+              "create_index",
+              "manage",
+              "index",
+              "delete"
+            ],
+            "query": "{"bool": {"should": [{"term": {"labels.org": "org-1"}}, {"term": {"labels.org": "org-2"}}]}}"
+          }
+        ],
+        "tenant_permissions": [
+          {
+            "tenant_patterns": [
+              "INSURER1"
+            ],
+            "allowed_actions": [
+              "kibana_all_read"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "insurer1_user_org1",
+        "description": "User role for INSURER1 with access only to org-1 data",
+        "cluster_permissions": [
+          "cluster_monitor"
+        ],
+        "index_permissions": [
+          {
+            "index_patterns": [
+              "wazuh-alerts-*"
+            ],
+            "fls": [],
+            "masked_fields": [],
+            "allowed_actions": [
+              "read",
+              "indices_monitor",
+              "indices_data/read"
+            ],
+            "query": "{"term": {"labels.org": "org-1"}}"
+          }
+        ],
+        "tenant_permissions": [
+          {
+            "tenant_patterns": [
+              "INSURER1"
+            ],
+            "allowed_actions": [
+              "kibana_all_read"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "insurer1_user_org2",
+        "description": "User role for INSURER1 with access only to org-2 data",
+        "cluster_permissions": [
+          "cluster_monitor"
+        ],
+        "index_permissions": [
+          {
+            "index_patterns": [
+              "wazuh-alerts-*"
+            ],
+            "fls": [],
+            "masked_fields": [],
+            "allowed_actions": [
+              "read",
+              "indices_monitor",
+              "indices_data/read"
+            ],
+            "query": "{"term": {"labels.org": "org-2"}}"
+          }
+        ],
+        "tenant_permissions": [
+          {
+            "tenant_patterns": [
+              "INSURER1"
+            ],
+            "allowed_actions": [
+              "kibana_all_read"
+            ]
+          }
+        ]
+      }
+    ],
+    "users": [
+      {
+        "username": "insurer1_admin",
+        "password": "Insurer1AdminPassword!",
+        "roles": [
+          "insurer1_admin"
+        ],
+        "attributes": {
+          "tenant": "INSURER1"
+        }
+      },
+      {
+        "username": "insurer1_user_org1",
+        "password": "Insurer1User1Password!",
+        "roles": [
+          "insurer1_user_org1"
+        ],
+        "attributes": {
+          "tenant": "INSURER1"
+        }
+      },
+      {
+        "username": "insurer1_user_org2",
+        "password": "Insurer1User2Password!",
+        "roles": [
+          "insurer1_user_org2"
+        ],
+        "attributes": {
+          "tenant": "INSURER1"
+        }
+      }
+    ]
+  }
+}
