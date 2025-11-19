@@ -101,26 +101,46 @@ The PoC simulates cyber incidents that may trigger parametric insurance claims:
 The final PoC will be stored in GitHub for repeatable deployments:
 
 ```
-WazuhPoC/
-├── Vagrantfile
+wazuh-cyber-insurance-saas/
 ├── README.md
-├── scripts/
-│   ├── install_docker.sh
-│   ├── install_wazuh_agent.sh
-│   ├── register_agents.sh
-│   └── simulate_threats/
-│       ├── ransomware.sh
-│       ├── ssh_bruteforce.sh
-│       ├── malware_eicar.sh
-│       └── privilege_escalation.sh
-├── configs/
-│   ├── wazuh.yml
-│   ├── ossec.conf.org1
-│   ├── ossec.conf.org2
-│   ├── ossec.conf.org3
-│   └── ossec.conf.org4
-└── docs/
-    └── demo_script.md
+├── LICENSE
+├── Vagrantfile
+├── demo_scripts/
+│   └── demo_run.sh
+├── docs/
+│   ├── Multi-Tenant_Wazuh_Cyber_Insurance_PoC_Guide.md
+│   ├── architecture_diagram.png
+│   └── dashboard_screenshot.gif
+├── simulate_threats/
+│   ├── org1/
+│   │   ├── eicar_ransomware.sh
+│   │   └── ssh_bruteforce.sh
+│   ├── org2/
+│   │   └── privilege_escalation.sh
+│   ├── org3/
+│   │   └── network_scan.sh
+│   └── org4/
+│       └── file_modification.sh
+├── wazuh-configs/
+│   ├── agents/
+│   │   ├── org1_agent_config.xml
+│   │   ├── org2_agent_config.xml
+│   │   ├── org3_agent_config.xml
+│   │   └── org4_agent_config.xml
+│   └── tenants/
+│       ├── INSURER1_tenant.json
+│       ├── INSURER2_tenant.json
+│       └── REINSURER_tenant.json
+└── wazuh-docker/
+    ├── docker-compose.yml
+    ├── configs/
+    │   ├── custom_rules.xml
+    │   ├── opensearch_dashboards.yml
+    │   └── ossec.conf
+    └── scripts/
+        ├── backup.sh
+        ├── start.sh
+        └── stop.sh
 ```
 ---
 ## Part 1: Setup Windows Host
@@ -168,7 +188,7 @@ cd C:\WazuhPoC
 
 ```powershell
 git init
-git remote add origin https://github.com/yourusername/WazuhPoC.git
+git remote add origin https://github.com/zouaghi-firas/wazuh-cyber-insurance-saas.git
 ```
 ---
 ### 1.6 Verify Environment

@@ -38,8 +38,8 @@ The PoC consists of 7 virtual machines organized as follows:
 
 1. Clone this repository:
    ```
-   git clone https://github.com/yourusername/WazuhPoC.git
-   cd WazuhPoC
+   git clone https://github.com/zouaghi-firas/wazuh-cyber-insurance-saas.git
+   cd wazuh-cyber-insurance-saas
    ```
 
 2. Start all virtual machines:
@@ -101,8 +101,8 @@ The PoC consists of 7 virtual machines organized as follows:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/WazuhPoC.git
-   cd WazuhPoC
+   git clone https://github.com/zouaghi-firas/wazuh-cyber-insurance-saas.git
+   cd wazuh-cyber-insurance-saas
    ```
 
 2. Review the Vagrantfile to ensure it matches your environment:
@@ -304,45 +304,46 @@ If you need to completely reset the environment:
 ## Repository Structure
 
 ```
-WazuhPoC/
+wazuh-cyber-insurance-saas/
 ├── README.md                      # This file
+├── LICENSE                        # License file
 ├── Vagrantfile                    # Defines all 7 VMs
-├── LICENSE                        # Optional license file
-├── .gitignore                     # Ignore logs, Vagrant state, temp files
-├── wazuh-docker/
-│   ├── docker-compose.yml
-│   ├── configs/
-│   │   ├── ossec.conf
-│   │   ├── opensearch_dashboards.yml
-│   │   └── custom_rules.xml
-│   └── scripts/
-│       ├── start.sh
-│       ├── stop.sh
-│       └── backup.sh
+├── demo_scripts/
+│   └── demo_run.sh                # Script to run all threat simulations
+├── docs/
+│   ├── Multi-Tenant_Wazuh_Cyber_Insurance_PoC_Guide.md  # Detailed setup guide
+│   ├── architecture_diagram.png   # Architecture diagram
+│   └── dashboard_screenshot.gif   # Dashboard screenshot
 ├── simulate_threats/
 │   ├── org1/
-│   │   ├── eicar_ransomware.sh
-│   │   └── ssh_bruteforce.sh
+│   │   ├── eicar_ransomware.sh    # Ransomware simulation for org-1
+│   │   └── ssh_bruteforce.sh      # SSH brute-force simulation for org-1
 │   ├── org2/
-│   │   └── privilege_escalation.sh
+│   │   └── privilege_escalation.sh  # Privilege escalation for org-2
 │   ├── org3/
-│   │   └── network_scan.sh
+│   │   └── network_scan.sh        # Network scanning for org-3
 │   └── org4/
-│       └── file_modification.sh
-├── demo_scripts/
-│   └── demo_run.sh
+│       └── file_modification.sh   # File modification for org-4
 ├── wazuh-configs/
 │   ├── agents/
-│   │   ├── org1_agent_config.xml
-│   │   ├── org2_agent_config.xml
-│   │   ├── org3_agent_config.xml
-│   │   └── org4_agent_config.xml
+│   │   ├── org1_agent_config.xml  # Configuration for org-1 agent
+│   │   ├── org2_agent_config.xml  # Configuration for org-2 agent
+│   │   ├── org3_agent_config.xml  # Configuration for org-3 agent
+│   │   └── org4_agent_config.xml  # Configuration for org-4 agent
 │   └── tenants/
-│       ├── INSURER1_tenant.json
-│       └── INSURER2_tenant.json
-└── docs/
-    ├── architecture_diagram.png
-    └── dashboard_screenshot.png
+│       ├── INSURER1_tenant.json   # Configuration for INSURER1 tenant
+│       ├── INSURER2_tenant.json   # Configuration for INSURER2 tenant
+│       └── REINSURER_tenant.json  # Configuration for REINSURER tenant
+└── wazuh-docker/
+    ├── docker-compose.yml          # Docker Compose configuration
+    ├── configs/
+    │   ├── custom_rules.xml        # Custom Wazuh rules
+    │   ├── opensearch_dashboards.yml  # OpenSearch Dashboard configuration
+    │   └── ossec.conf              # Wazuh manager configuration
+    └── scripts/
+        ├── backup.sh               # Backup script
+        ├── start.sh                # Start script
+        └── stop.sh                 # Stop script
 ```
 
 ## Architecture Diagram
