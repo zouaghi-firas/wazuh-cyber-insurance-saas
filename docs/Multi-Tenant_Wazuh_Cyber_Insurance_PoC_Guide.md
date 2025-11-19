@@ -1,7 +1,9 @@
 # Multi-Tenant Wazuh Cyber Insurance PoC – Guide
----
-## **Introduction**
-This document is a **complete step-by-step guide** to deploy a **multi-tenant Wazuh PoC** for a **parametric cyber insurance scenario**. It assumes you start with a **clean Windows PC** and zero prior knowledge. The goal is to demonstrate:
+
+## Introduction
+
+This document provides a comprehensive step-by-step guide to deploy a multi-tenant Wazuh Proof of Concept (PoC) for a parametric cyber insurance scenario. It assumes you start with a clean Windows PC and zero prior knowledge of Wazuh. The goal is to demonstrate:
+
 - How to set up **REINSURER** as the global Wazuh admin
 - How to configure **INSURER1** and **INSURER2** tenants
 - How to manage **multiple SME organisations (org-1 → org-4)**
@@ -9,53 +11,56 @@ This document is a **complete step-by-step guide** to deploy a **multi-tenant Wa
 - How to configure **roles, DLS filters, tenants, and users**
 - How to **simulate cyber risks** for insurance claims
 - How to **run a demo** showing tenant isolation and REINSURER oversight
-All commands, config files, and dashboard actions are included.
----
 
-## **Architecture Overview**
-### **ASCII Diagram – Logical Architecture**
+All commands, configuration files, and dashboard actions are included.
+
+## Architecture Overview
+
+### Logical Architecture Diagram
 
 ```
-
 +---------------------------+
 |      REINSURER Admin      |
 | Wazuh Manager & Dashboard |
 | OpenSearch / Kibana       |
 | Super Tenant Access       |
 +------------+--------------+
-|
--
-
-|                                           |
-+-----------------------------+             +-----------------------------+
-| INSURER1 Tenant             |             | INSURER2 Tenant             |
-| Admin: INSURER1-admin       |             | Admin: INSURER2-admin       |
-| Organisations: org-1, org-2 |             | Organisations: org-3, org-4 |
-| Users:                      |             | Users:                      |
-| - INSURER1-user-org1        |             | - INSURER2-user-org3        |
-| - INSURER1-user-org2        |             |                             |
-+-----------------------------+             +-----------------------------+
-|
--
-|              |                            |              |
-+----------+   +----------+                 +----------+   +----------+
-| org-1 VM |   | org-2 VM |                 | org-3 VM |   | org-4 VM |
-+----------+   +----------+                 +----------+   +----------+
-
+             |
+             |-----------------------|
+             |                       |
++----------------------+   +----------------------+
+| INSURER1 Tenant      |   | INSURER2 Tenant      |
+| Admin: INSURER1-admin|   | Admin: INSURER2-admin|
+| Organisations:       |   | Organisations:       |
+| - org-1              |   | - org-3              |
+| - org-2              |   | - org-4              |
+| Users:               |   | Users:               |
+| - INSURER1-user-org1 |   | - INSURER2-user-org3 |
+| - INSURER1-user-org2 |   | - INSURER2-user-org4 |
++----------+-----------+   +----------+-----------+
+           |                          |
++----------+-----------+   +----------+-----------+
+| org-1 VM | org-2 VM  |   | org-3 VM | org-4 VM  |
++----------+-----------+   +----------+-----------+
 ```
 
 
-### **Components**
-- **VM 1:** REINSURER-admin → Wazuh Manager, OpenSearch, Dashboard, Super Admin
-- **VM 2:** INSURER1-admin → Admin for tenant INSURER1, full tenant access
-- **VM 3:** INSURER2-admin → Admin for tenant INSURER2, full tenant access
-- **VM 4:** INSURER1-user-org1 → SME org-1, limited alerts access
-- **VM 5:** INSURER1-user-org2 → SME org-2, limited alerts access
-- **VM 6:** INSURER2-user-org3 → SME org-3, limited alerts access
-- **VM 7 (optional):** INSURER2-user-org4 → SME org-4, limited alerts access
+### System Components
+
+| VM # | Name              | Role                    | Tenant      | Access Level               |
+|------|-------------------|-------------------------|-------------|---------------------------|
+| 1    | vm-reinsurer      | REINSURER-admin          | Global      | Full admin access          |
+| 2    | vm-insurer1-admin | INSURER1-admin          | INSURER1    | Full tenant access        |
+| 3    | vm-insurer2-admin | INSURER2-admin          | INSURER2    | Full tenant access        |
+| 4    | vm-insurer1-org1  | INSURER1-user-org1       | INSURER1    | Limited to org-1 alerts   |
+| 5    | vm-insurer1-org2  | INSURER1-user-org2       | INSURER1    | Limited to org-2 alerts   |
+| 6    | vm-insurer2-org3  | INSURER2-user-org3       | INSURER2    | Limited to org-3 alerts   |
+| 7    | vm-insurer2-org4  | INSURER2-user-org4       | INSURER2    | Limited to org-4 alerts   |
 ---
-## **Cyber Insurance Scenario**
+## Cyber Insurance Scenario
+
 The PoC simulates cyber incidents that may trigger parametric insurance claims:
+
 - **Ransomware** – encrypts files
 - **Brute-force SSH attacks**
 - **Malware downloads** (EICAR test files)
@@ -64,16 +69,26 @@ The PoC simulates cyber incidents that may trigger parametric insurance claims:
 - **Log tampering**
 - **Service disruption**
 - **Network scanning**
-**REINSURER** sees all incidents. Each insurer sees only incidents for their tenant. SME users see only incidents for their organisation.
+
+### Access Control Model
+
+- **REINSURER** sees all incidents across all tenants
+- Each insurer sees only incidents for their tenant
+- SME users see only incidents for their specific organisation
 ---
-## **Required Tools**
-### On Windows Host:
-- [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-- [Vagrant](https://www.vagrantup.com/downloads)
+## Required Tools
+
+### Windows Host Requirements
+
+- [VirtualBox](https://www.virtualbox.org/wiki/Downloads) 6.1 or later
+- [Vagrant](https://www.vagrantup.com/downloads) 2.2.19 or later
 - [Git](https://git-scm.com/downloads)
 - PowerShell (preinstalled)
 - Internet access to download Ubuntu Vagrant boxes and Docker images
-### On Linux VMs:
+- Minimum 16GB RAM and 50GB free disk space
+
+### Linux VM Requirements
+
 - Ubuntu Server 22.04 LTS
 - Docker & Docker Compose (on REINSURER VM)
 - Wazuh Manager (REINSURER VM)
@@ -81,8 +96,10 @@ The PoC simulates cyber incidents that may trigger parametric insurance claims:
 - Wazuh Agent (all SME & Admin VMs)
 - OpenSearch / Kibana (REINSURER VM)
 ---
-## **GitHub Repository Structure**
+## GitHub Repository Structure
+
 The final PoC will be stored in GitHub for repeatable deployments:
+
 ```
 WazuhPoC/
 ├── Vagrantfile
@@ -103,52 +120,64 @@ WazuhPoC/
 │   ├── ossec.conf.org3
 │   └── ossec.conf.org4
 └── docs/
-└── demo_script.md
-````
+    └── demo_script.md
+```
 ---
-## **Part 1: Setup Windows Host**
+## Part 1: Setup Windows Host
+
 ### 1.1 Install VirtualBox
-1. Download VirtualBox from [https://www.virtualbox.org/wiki/Downloads](https://www.virtualbox.org/wiki/Downloads)  
-2. Run installer with default settings  
+
+1. Download VirtualBox from [https://www.virtualbox.org/wiki/Downloads](https://www.virtualbox.org/wiki/Downloads)
+2. Run installer with default settings
 3. Verify installation in PowerShell:
+
 ```powershell
 VBoxManage --version
-````
+```
+
 Expected output: version number, e.g., `7.0.8`
 ---
 ### 1.2 Install Vagrant
+
 1. Download from [https://www.vagrantup.com/downloads](https://www.vagrantup.com/downloads)
 2. Install with default options
 3. Verify:
+
 ```powershell
 vagrant --version
 ```
 ---
 ### 1.3 Install Git
+
 1. Download from [https://git-scm.com/downloads](https://git-scm.com/downloads)
 2. Install with default options (use Git from Command Prompt)
 3. Verify:
+
 ```powershell
 git --version
 ```
 ---
 ### 1.4 Create Workspace
+
 ```powershell
 mkdir C:\WazuhPoC
 cd C:\WazuhPoC
 ```
 ---
 ### 1.5 Initialize GitHub Repository
+
 ```powershell
 git init
 git remote add origin https://github.com/yourusername/WazuhPoC.git
 ```
 ---
 ### 1.6 Verify Environment
-* VirtualBox installed and accessible
-* Vagrant installed and accessible
-* Git installed and accessible
-* Workspace folder created
+
+- VirtualBox installed and accessible
+- Vagrant installed and accessible
+- Git installed and accessible
+- Workspace folder created
+
 > You are now ready to **define the 7 VMs** for the PoC.
 ---
 # Part 2: Create and Launch 7 VMs Using Vagrant
@@ -250,7 +279,7 @@ mkdir -p ~/wazuh-configs
 * `simulate_threats/` → scripts to simulate ransomware, SSH brute-force, etc.
 * `wazuh-configs/` → configuration files (ossec.conf, wazuh.yml)
 ---
-### ✅ **Part 2 Complete**
+
 * All 7 VMs are created and running
 * Private network IPs assigned
 * Hostnames set
@@ -404,7 +433,6 @@ Password: admin
 * Log in as `INSURER2-admin` → see only INSURER2 tenant
 * Log in as `reinsurer-admin` → see all tenants and all orgs
 ---
-### ✅ **Part 3 Complete**
 * Docker & Wazuh installed on REINSURER VM
 * OpenSearch & Dashboard running
 * Multi-tenant users created
@@ -510,7 +538,6 @@ mkdir -p ~/simulate_threats
 ```
 * Place scripts for ransomware, SSH brute-force, malware, privilege escalation, etc.
 ---
-### ✅ **Part 4 Complete**
 * Wazuh agents installed and registered on all SME/Admin VMs
 * Agent labels configured for org-1 → org-4
 * Agents connected to REINSURER Manager
@@ -600,7 +627,6 @@ Roles define permissions on dashboards and data (Document Level Security).
 - **Users**: Map to roles and tenants
 - **Result**: SME users cannot see other orgs; insurer admins see only their tenant; REINSURER sees everything
 ---
-### ✅ **Part 5 Complete**
 - Multi-tenant users, roles, and DLS filters are configured  
 - Tenants created and dashboards assigned  
 - Role-based access control verified  
@@ -725,7 +751,6 @@ vagrant ssh vm-insurer2-org4 -- "~/simulate_threats/file_modification.sh"
 echo "All threats executed. Check dashboards!"
 ```
 ---
-### ✅ **Part 6 Complete**
 * Threat simulation scripts prepared and executed
 * Alerts generated for each SME organization
 * Tenant-level visibility verified
@@ -807,7 +832,6 @@ cd ~/wazuh-docker/scripts/simulate_threats
 | INSURER2-user-org3 | INSURER2 | org-3      | View only org-3 alerts         |
 | INSURER2-user-org4 | INSURER2 | org-4      | View only org-4 alerts         |
 ---
-### ✅ **Part 7 Complete**
 * Multi-tenant PoC fully operational
 * Threats triggered, alerts captured
 * SME users, insurer admins, and REINSURER oversight verified
@@ -897,7 +921,6 @@ server.ssl.key: /path/to/key.pem
 * Network scan detected on org-3 → security incident logged
 * Integrate with **ticketing / claims management system** (optional for extended PoC)
 ---
-### ✅ **Part 8 Complete**
 * Environment automation ready via Vagrant & GitHub
 * Scheduled threat simulations possible
 * Email notifications configured
