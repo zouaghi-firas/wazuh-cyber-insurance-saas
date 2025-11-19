@@ -2,6 +2,8 @@
 
 This repository provides a complete, ready-to-run multi-tenant Wazuh Proof of Concept (PoC) suitable for a cyber insurance scenario. It demonstrates how Wazuh can be used in a multi-tenant environment with different organizations and roles, including a reinsurer, insurers, and SME organizations.
 
+For a detailed step-by-step guide, see the [Multi-Tenant Wazuh Cyber Insurance PoC Guide](docs/Multi-Tenant_Wazuh_Cyber_Insurance_PoC_Guide.md).
+
 ## Architecture Overview
 
 The PoC consists of 7 virtual machines organized as follows:
