@@ -1,0 +1,20 @@
+server.host: 0.0.0.0
+server.port: 5601
+server.ssl.enabled: true
+server.ssl.certificate: /usr/share/wazuh-dashboard/certs/wazuh-dashboard.crt
+server.ssl.key: /usr/share/wazuh-dashboard/certs/wazuh-dashboard.key
+server.ssl.certificateAuthorities: ["/usr/share/wazuh-dashboard/certs/root-ca.pem"]
+opensearch.hosts: ["https://wazuh.indexer:9200"]
+opensearch.ssl.verificationMode: certificate
+opensearch.ssl.certificate: /usr/share/wazuh-dashboard/certs/wazuh-dashboard.crt
+opensearch.ssl.key: /usr/share/wazuh-dashboard/certs/wazuh-dashboard.key
+opensearch.ssl.certificateAuthorities: ["/usr/share/wazuh-dashboard/certs/root-ca.pem"]
+opensearch.username: admin
+opensearch.password: SecretPassword
+opensearch.requestHeadersWhitelist: ["securitytenant","Authorization"]
+opensearch_security.multitenancy.enabled: true
+opensearch_security.multitenancy.tenants.enable_global: true
+opensearch_security.multitenancy.tenants.enable_private: true
+opensearch_security.multitenancy.tenants.preferred: ["Private", "Global"]
+opensearch_security.multitenancy.enable_filter: true
+uiSettings.overrides.defaultRoute: /app/wazuh
