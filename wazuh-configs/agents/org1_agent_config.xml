@@ -1,40 +1,43 @@
 <!--
   Wazuh Agent Configuration for org-1
   This configuration is for the agent in organization 1
+  Multi-tenant setup with labels for organization identification
 -->
 
 <ossec_config>
+  <!-- Client configuration for connecting to Wazuh Manager -->
   <client>
     <server>
-      <address>192.168.56.10</address>
-      <port>1514</port>
-      <protocol>tcp</protocol>
+      <address>192.168.56.10</address>  <!-- IP of the Wazuh Manager (REINSURER VM) -->
+      <port>1514</port>               <!-- Default port for agent communication -->
+      <protocol>tcp</protocol>          <!-- Communication protocol -->
     </server>
-    <config-profile>org-1</config-profile>
-    <notify_time>10</notify_time>
-    <time_reconnect>60</time_reconnect>
-    <auto_restart>yes</auto_restart>
-    <crypto_method>aes</crypto_method>
+    <config-profile>org-1</config-profile>  <!-- Profile name for this agent -->
+    <notify_time>10</notify_time>          <!-- Time in seconds between state notifications -->
+    <time_reconnect>60</time_reconnect>    <!-- Time in seconds to reconnect if connection is lost -->
+    <auto_restart>yes</auto_restart>       <!-- Automatically restart agent if it crashes -->
+    <crypto_method>aes</crypto_method>      <!-- Encryption method for communication -->
   </client>
 
   <!-- Agent-specific labels for multi-tenant identification -->
+  <!-- These labels are used for Document Level Security (DLS) in OpenSearch -->
   <labels>
-    <label key="org" value="org-1"/>
-    <label key="tenant" value="INSURER1"/>
-    <label key="department" value="SME"/>
+    <label key="organisation" value="org-1"/>  <!-- Organization identifier -->
+    <label key="tenant" value="INSURER1"/>      <!-- Tenant identifier -->
+    <label key="department" value="SME"/>         <!-- Department type -->
   </labels>
 
-  <!-- Local syscheck configuration -->
+  <!-- File integrity monitoring configuration -->
   <syscheck>
-    <disabled>no</disabled>
+    <disabled>no</disabled>  <!-- Enable file integrity monitoring -->
 
-    <!-- Frequency that syscheck is executed - every 6 hours -->
+    <!-- Frequency that syscheck is executed - every 6 hours (21600 seconds) -->
     <frequency>21600</frequency>
 
-    <!-- Scan on startup -->
+    <!-- Perform a full scan on agent startup -->
     <scan_on_start>yes</scan_on_start>
 
-    <!-- Directories to check -->
+    <!-- Critical system directories to monitor for changes -->
     <directories check_all="yes">/etc,/usr/bin,/usr/sbin</directories>
     <directories check_all="yes">/bin,/sbin</directories>
 

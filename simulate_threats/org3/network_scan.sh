@@ -21,11 +21,19 @@ nmap -sn $NETWORK > $SCAN_LOG 2>&1
 
 # Perform a more detailed scan of a few hosts
 echo "Performing a detailed scan of selected hosts..."
-nmap -sS -O -p 22,80,443,3389 192.168.56.10 192.168.56.11 192.168.56.12 >> $SCAN_LOG 2>&1
+nmap -sS -O -p 22,80,443,3389,1433,3306 192.168.56.10 192.168.56.11 192.168.56.12 >> $SCAN_LOG 2>&1
 
 # Perform a version detection scan
 echo "Performing a version detection scan..."
-nmap -sV -p 22,80,443 192.168.56.10 >> $SCAN_LOG 2>&1
+nmap -sV -p 22,80,443,1433,3306 192.168.56.10 >> $SCAN_LOG 2>&1
+
+# Perform an aggressive scan with scripts
+echo "Performing an aggressive scan with default scripts..."
+nmap -sC -p 1-100 192.168.56.10 >> $SCAN_LOG 2>&1
+
+# Perform a UDP scan
+echo "Performing a UDP scan on common ports..."
+nmap -sU -p 53,161,162,500,1434,1900 192.168.56.10 >> $SCAN_LOG 2>&1
 
 echo "Network scanning simulation complete."
 echo "Scan results saved to $SCAN_LOG"

@@ -1,6 +1,12 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# Multi-tenant Wazuh Cyber Insurance PoC Vagrantfile
+# This file defines 7 virtual machines:
+# - 1 REINSURER VM (Global Admin)
+# - 2 INSURER Admin VMs
+# - 4 SME organization VMs
+
 # Define the number of VMs and their configurations
 Vagrant.configure("2") do |config|
   # Use Ubuntu 22.04 LTS box
@@ -16,9 +22,16 @@ Vagrant.configure("2") do |config|
   config.vm.box_check_update = false
 
   # REINSURER VM (Global Admin)
+  # This VM hosts the Wazuh Manager, OpenSearch, and Dashboard
   config.vm.define "vm-reinsurer" do |reinsurer|
     reinsurer.vm.hostname = "vm-reinsurer"
     reinsurer.vm.network "private_network", ip: "192.168.56.10"
+
+    # Assign more resources to the REINSURER VM
+    reinsurer.vm.provider "virtualbox" do |vb|
+      vb.memory = "4096"  # More memory for Docker containers
+      vb.cpus = "2"
+    end
 
     # Mount shared folders
     reinsurer.vm.synced_folder ".", "/vagrant", disabled: false
@@ -39,8 +52,9 @@ Vagrant.configure("2") do |config|
       apt-get update
       apt-get install -y docker-ce docker-ce-cli containerd.io
 
-      # Install Docker Compose
-      curl -L "https://github.com/docker/compose/releases/download/v2.12.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+      # Install Docker Compose (using the latest stable version)
+      DOCKER_COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep tag_name | cut -d '"' -f 4)
+      curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
       chmod +x /usr/local/bin/docker-compose
 
       # Add vagrant user to docker group
@@ -66,16 +80,23 @@ Vagrant.configure("2") do |config|
       systemctl start wazuh-manager
 
       # Open firewall ports
-      ufw allow 1514/tcp
-      ufw allow 1515/tcp
-      ufw allow 5601/tcp
-      ufw allow 9200/tcp
+      ufw allow 1514/tcp  # Wazuh agent communication
+      ufw allow 1515/tcp  # Wazuh agent registration
+      ufw allow 5601/tcp  # OpenSearch Dashboard
+      ufw allow 9200/tcp  # OpenSearch REST API
+      ufw allow 9300/tcp  # OpenSearch node communication
 
       # Create startup script for Docker services
       echo '#!/bin/bash' > /home/vagrant/start_wazuh.sh
       echo 'cd /vagrant/wazuh-docker' >> /home/vagrant/start_wazuh.sh
       echo 'docker-compose up -d' >> /home/vagrant/start_wazuh.sh
       chmod +x /home/vagrant/start_wazuh.sh
+
+      # Create stop script for Docker services
+      echo '#!/bin/bash' > /home/vagrant/stop_wazuh.sh
+      echo 'cd /vagrant/wazuh-docker' >> /home/vagrant/stop_wazuh.sh
+      echo 'docker-compose down' >> /home/vagrant/stop_wazuh.sh
+      chmod +x /home/vagrant/stop_wazuh.sh
 
       echo "REINSURER VM setup complete"
     SHELL

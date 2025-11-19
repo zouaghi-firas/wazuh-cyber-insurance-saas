@@ -1,20 +1,34 @@
-server.host: 0.0.0.0
-server.port: 5601
-server.ssl.enabled: true
+# OpenSearch Dashboard Configuration for Wazuh
+# This configuration enables multi-tenancy for the cyber insurance scenario
+
+# Server configuration
+server.host: 0.0.0.0          # Listen on all interfaces
+server.port: 5601               # Default port for OpenSearch Dashboard
+server.ssl.enabled: true           # Enable SSL/TLS
 server.ssl.certificate: /usr/share/wazuh-dashboard/certs/wazuh-dashboard.crt
 server.ssl.key: /usr/share/wazuh-dashboard/certs/wazuh-dashboard.key
 server.ssl.certificateAuthorities: ["/usr/share/wazuh-dashboard/certs/root-ca.pem"]
-opensearch.hosts: ["https://wazuh.indexer:9200"]
-opensearch.ssl.verificationMode: certificate
+
+# OpenSearch cluster configuration
+opensearch.hosts: ["https://wazuh.indexer:9200"]  # OpenSearch nodes
+opensearch.ssl.verificationMode: certificate               # Verify certificates
 opensearch.ssl.certificate: /usr/share/wazuh-dashboard/certs/wazuh-dashboard.crt
 opensearch.ssl.key: /usr/share/wazuh-dashboard/certs/wazuh-dashboard.key
 opensearch.ssl.certificateAuthorities: ["/usr/share/wazuh-dashboard/certs/root-ca.pem"]
+
+# OpenSearch authentication
 opensearch.username: admin
 opensearch.password: SecretPassword
+
+# Security headers for multi-tenancy
 opensearch.requestHeadersWhitelist: ["securitytenant","Authorization"]
+
+# Multi-tenancy configuration
 opensearch_security.multitenancy.enabled: true
 opensearch_security.multitenancy.tenants.enable_global: true
 opensearch_security.multitenancy.tenants.enable_private: true
 opensearch_security.multitenancy.tenants.preferred: ["Private", "Global"]
 opensearch_security.multitenancy.enable_filter: true
-uiSettings.overrides.defaultRoute: /app/wazuh
+
+# UI settings
+uiSettings.overrides.defaultRoute: /app/wazuh  # Default route to Wazuh app

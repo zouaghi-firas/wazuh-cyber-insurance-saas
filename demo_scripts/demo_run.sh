@@ -17,10 +17,21 @@ execute_on_vm() {
     echo "Executing on $vm_name: $description"
     echo "---------------------------------------------------"
 
-    # Execute the script on the VM
-    vagrant ssh $vm_name -c "sudo bash $script_path"
+    # Check if VM is running before attempting to connect
+    if ! vagrant status $vm_name | grep -q "running"; then
+        echo "ERROR: VM $vm_name is not running. Skipping execution."
+        return 1
+    fi
 
-    echo "Execution on $vm_name completed."
+    # Execute the script on the VM with error handling
+    echo "Connecting to $vm_name and executing script..."
+    if vagrant ssh $vm_name -c "sudo bash $script_path"; then
+        echo "SUCCESS: Script execution on $vm_name completed."
+    else
+        echo "ERROR: Failed to execute script on $vm_name."
+        return 1
+    fi
+
     echo ""
 
     # Wait a bit for events to be processed

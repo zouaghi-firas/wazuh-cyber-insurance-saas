@@ -30,7 +30,7 @@
               "index",
               "delete"
             ],
-            "query": "{"bool": {"should": [{"term": {"labels.org": "org-3"}}, {"term": {"labels.org": "org-4"}}]}}"
+            "query": {"bool": {"should": [{"term": {"labels.organisation": "org-3"}}, {"term": {"labels.organisation": "org-4"}}]}}
           }
         ],
         "tenant_permissions": [
@@ -62,7 +62,7 @@
               "indices_monitor",
               "indices_data/read"
             ],
-            "query": "{"term": {"labels.org": "org-3"}}"
+            "query": {"term": {"labels.organisation": "org-3"}}
           }
         ],
         "tenant_permissions": [
@@ -94,7 +94,7 @@
               "indices_monitor",
               "indices_data/read"
             ],
-            "query": "{"term": {"labels.org": "org-4"}}"
+            "query": {"term": {"labels.organisation": "org-4"}}
           }
         ],
         "tenant_permissions": [

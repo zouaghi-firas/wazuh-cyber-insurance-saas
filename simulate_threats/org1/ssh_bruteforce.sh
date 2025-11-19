@@ -26,6 +26,13 @@ for password in "${PASSWORDS[@]}"; do
     sleep 1
 done
 
+# Alternative method without hydra (in case hydra is not available)
+echo "Trying alternative method with ssh command..."
+for password in "${PASSWORDS[@]}"; do
+    echo "Attempting SSH login with password: $password"
+    timeout 2 ssh -o BatchMode=yes -o ConnectTimeout=1 -o StrictHostKeyChecking=no $USERNAME@$TARGET "echo 'login successful'" 2>&1 || true
+done
+
 echo "SSH brute-force simulation complete."
 echo "Failed login attempts have been logged to /var/log/auth.log"
 echo "Check the Wazuh dashboard for alerts (rule ID: 100002)."

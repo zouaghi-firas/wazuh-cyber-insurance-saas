@@ -7,31 +7,31 @@
         "name": "reinsurer_admin",
         "description": "Admin role for REINSURER with access to all data",
         "cluster_permissions": [
-          "cluster_all",
-          "indices_all",
-          "plugins_all",
-          "write_all_metadata"
+          "cluster_all",           
+          "indices_all",           
+          "plugins_all",           
+          "write_all_metadata"      
         ],
         "index_permissions": [
           {
             "index_patterns": [
-              "*"
+              "*"                    
             ],
-            "fls": [],
-            "masked_fields": [],
+            "fls": [],              
+            "masked_fields": [],     
             "allowed_actions": [
-              "all"
+              "all"                  
             ],
-            "query": {}
+            "query": {}              
           }
         ],
         "tenant_permissions": [
           {
             "tenant_patterns": [
-              "*"
+              "*"                    
             ],
             "allowed_actions": [
-              "kibana_all"
+              "kibana_all"           
             ]
           }
         ]
@@ -45,7 +45,7 @@
           "reinsurer_admin"
         ],
         "attributes": {
-          "tenant": "Global"
+          "tenant": "Global"         
         }
       }
     ]

@@ -7,27 +7,28 @@ echo "=== Privilege Escalation Simulation for org-2 ==="
 echo "Simulating privilege escalation attempts..."
 
 # Switch to testuser to simulate a non-privileged user
-su - testuser <<'EOF'
-echo "Attempting privilege escalation as testuser..."
+echo "Switching to testuser for privilege escalation simulation..."
+su - testuser -c "
+echo 'Attempting privilege escalation as testuser...'
 
 # Attempt to use sudo with a wrong password (will fail)
-echo "Attempting sudo with wrong password..."
-echo "wrongpassword" | sudo -S whoami 2>&1 | head -n 5
+echo 'Attempting sudo with wrong password...'
+echo 'wrongpassword' | sudo -S whoami 2>&1 | head -n 5
 
 # Attempt to switch to root using su (will fail)
-echo "Attempting to switch to root using su..."
-echo "wrongpassword" | su - root -c "whoami" 2>&1 | head -n 5
+echo 'Attempting to switch to root using su...'
+echo 'wrongpassword' | su - root -c 'whoami' 2>&1 | head -n 5
 
 # Attempt to read a shadow file (will fail)
-echo "Attempting to read /etc/shadow..."
+echo 'Attempting to read /etc/shadow...'
 cat /etc/shadow 2>&1 | head -n 5
 
 # Attempt to modify a system file (will fail)
-echo "Attempting to modify /etc/hosts..."
-echo "192.168.1.100 attacker.com" >> /etc/hosts 2>&1 | head -n 5
+echo 'Attempting to modify /etc/hosts...'
+echo '192.168.1.100 attacker.com' >> /etc/hosts 2>&1 | head -n 5
 
-echo "Privilege escalation attempts completed."
-EOF
+echo 'Privilege escalation attempts completed.'
+"
 
 echo "Privilege escalation simulation complete."
 echo "Failed attempts have been logged to /var/log/auth.log"

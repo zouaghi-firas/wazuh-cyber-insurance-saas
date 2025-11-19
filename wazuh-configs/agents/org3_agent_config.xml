@@ -18,10 +18,11 @@
   </client>
 
   <!-- Agent-specific labels for multi-tenant identification -->
+  <!-- These labels are used for Document Level Security (DLS) in OpenSearch -->
   <labels>
-    <label key="org" value="org-3"/>
-    <label key="tenant" value="INSURER2"/>
-    <label key="department" value="SME"/>
+    <label key="organisation" value="org-3"/>  <!-- Organization identifier -->
+    <label key="tenant" value="INSURER2"/>      <!-- Tenant identifier -->
+    <label key="department" value="SME"/>         <!-- Department type -->
   </labels>
 
   <!-- Local syscheck configuration -->
